@@ -1,0 +1,17 @@
+
+config ENABLE_TEST
+  bool "enable external module"
+  default y
+  help
+    test module enable or disable
+config NUM_A
+    int "enter 1st number"
+    default 10
+    help
+      taking sum of two numbers
+
+config NUM_B
+    int "enter 2nd number"
+    default 8
+    help
+      taking sum of two numbers

@@ -1,0 +1,4 @@
+name: test_folder
+build:
+  cmake: .
+  kconfig: Kconfig
