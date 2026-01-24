@@ -1,0 +1,12 @@
+/ {
+    aliases {
+        qmc5883l-dev = &qmc5883l0;   /* alias = qmc5883l-dev -> becomes _ in C macros */
+    };
+};
+
+&i2c0 {
+    qmc5883l0: qmc5883l@0d {      /* node-label : node-name */
+        compatible = "qmc5883l,sensor";
+        reg = <0x0D>;
+    };
+};

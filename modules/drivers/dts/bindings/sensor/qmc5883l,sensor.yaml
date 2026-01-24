@@ -1,0 +1,5 @@
+description: QMC5883L 3-axis magnetometer sensor
+
+compatible: "qmc5883l,sensor"
+
+include: [sensor-device.yaml, i2c-device.yaml]

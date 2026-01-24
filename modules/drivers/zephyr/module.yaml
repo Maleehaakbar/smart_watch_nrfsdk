@@ -1,0 +1,6 @@
+name: test_folder
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    dts_root: .
