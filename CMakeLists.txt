@@ -6,4 +6,10 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(smartwatch_test)
 
-target_sources(app PRIVATE src/main.c)
+set (APP_SOURCES
+    src/app/src/magnetometer.c)
+
+target_sources(app PRIVATE src/main.c
+                            ${APP_SOURCES})
+
+target_include_directories(app PRIVATE src/app/include)

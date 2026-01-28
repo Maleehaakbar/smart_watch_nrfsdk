@@ -1,0 +1,13 @@
+menu "ZSW Application"
+    module = ZSW_APP
+    module-str = "ZSW Application"
+    source "subsys/logging/Kconfig.template.log_config"
+
+    config ENABLE_QMC_CALIBRATION
+        bool "enable or disable calibration"
+        default y
+        help
+            enable or disable sensor module
+endmenu
+
+
