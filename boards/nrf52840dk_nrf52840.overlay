@@ -1,6 +1,7 @@
 / {
     aliases {
         qmc5883l-dev = &qmc5883l0;   /* alias = qmc5883l-dev -> becomes _ in C macros */
+        mpu6050-dev = &mpu6050;
     };
 };
 
@@ -9,4 +10,16 @@
         compatible = "qmc5883l,sensor";
         reg = <0x0D>;
     };
+};
+
+&i2c1 {
+    status = "okay";        /* enable the bus,i2c1 SDA= 30, SCL =31*/
+};
+
+&i2c1 {
+	mpu6050: mpu6050@68 {
+		compatible = "invensense,mpu6050";
+		reg = <0x68>;
+		status = "okay";
+	};
 };

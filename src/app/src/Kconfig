@@ -4,6 +4,7 @@ menu "ZSW Application"
     source "subsys/logging/Kconfig.template.log_config"
 
     config ENABLE_QMC_CALIBRATION
+        depends on ENABLE_QMC5883L_SENSOR
         bool "enable or disable calibration"
         default y
         help

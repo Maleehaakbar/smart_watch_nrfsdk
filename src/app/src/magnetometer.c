@@ -6,12 +6,11 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/settings/settings.h>
 
+/*TODO: header file incude doesnt make diference , code is compiled without it, so need
+to revisit how to exclude qmc sensor from build*/
 #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-#include "qmc5883l.h"
-#endif
 
-
-LOG_MODULE_REGISTER(zsw_magnetometer, CONFIG_ZSW_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(magnetometer, CONFIG_ZSW_APP_LOG_LEVEL);
 
 #define SETTINGS_NAME_MAGN              "magn"
 #define SETTINGS_KEY_CALIB              "calibr"
@@ -36,7 +35,7 @@ bool is_calibrating;
 static magn_calib_data_t calibration_data;
 
 
-/* read qmc833l sensor data SDA->26,SCL->27*/ 
+/* read qmc833l sensor data without calibration SDA->26,SCL->27*/ 
 int read_sensor(const struct device *sensor)
 {
 	struct sensor_value val[3];
@@ -206,6 +205,8 @@ int init_magnetometer(const struct device *sensor)
     return 0;
 }
 
+#endif
+
 //todo if x and y axis swap needed for mu and mpu
 //TODO : https://docs.zephyrproject.org/latest/hardware/peripherals/sensor/fetch_and_get.html
 //polling and triggers in sensors.
@@ -223,6 +224,13 @@ int init_magnetometer(const struct device *sensor)
 3. load calibration settings
 TODO: can add power saving , attributes, triggers etc
 */
+
+/*calibration procedure
+1. Take the raw readings .
+2. Find extremes(max and min values) by rotatiing sensor for 30-60 sec in x,y,z directions(up down, leftright, backforth)
+3. find offset using (max+min)/2
+4. Add offset calibration in all future readings.
+TODO: Calibration results are not accurate, need to revisit*/
 
 /*TODO: in compass app ui , if calibration data is stale, ask user to calibrate
 for now we are just testing calibration functions in main.c with temporary config option*/

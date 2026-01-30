@@ -6,14 +6,20 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/sensor_data_types.h>
 #include "magnetometer.h"
+#include "imu.h"
 
 
 #define SLEEP_TIME_MS 100U
 
 
 int main(void)
-{      int ret;
+{       int ret;
+        #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
+        
+
+        #ifdef CONFIG_ENABLE_QMC_CALIBRATION
         int64_t start = k_uptime_get();
+        #endif
 
          /*wait for serial display*/
         k_sleep(K_MSEC(1000));
@@ -48,16 +54,31 @@ int main(void)
         zsw_magnetometer_stop_calibration();
         #endif
 
+        #endif
+
+
+        static const struct device *mpu_sensor = DEVICE_DT_GET(DT_ALIAS(mpu6050_dev));
+        init_mpu6050(mpu_sensor);
+
         while(1)
-        {
+        { 
+                #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
                 /*read x,y,z axis from qmc5883l*/
                 ret = read_magn_with_calibration(qmc_sensor);
                 if(ret!=0)
                 {
                         break;
                 }
-                 k_sleep(K_MSEC(500));/*previous when testing without calibration: k_sleep(K_SECONDS(2)) */
-               
+                k_sleep(K_MSEC(500));/*previous when testing without calibration: k_sleep(K_SECONDS(2)) */
+                #endif
+
+                /*TODO make qmc and mpu run side by side in while(1)*/
+                ret = read_mpu6050(mpu_sensor);
+                if(ret!=0)
+                {
+                        break;
+                }
+                k_sleep(K_MSEC(500));
         }
         
         return 0;
