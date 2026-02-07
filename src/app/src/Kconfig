@@ -9,6 +9,20 @@ menu "ZSW Application"
         default y
         help
             enable or disable sensor module
+
+    config USE_RAW_MAGNETOMETER_DATA
+        bool "use raw data or calibrated data"
+        default y
+        help
+            use raw data or calibrated data of measurements
+    
+    config ENABLE_IMU
+        bool "Enable or disable accel and gyro"
+        default y
+        help
+            Enable or disable accel and gyro
+    
+
 endmenu
 
 

@@ -5,7 +5,7 @@
     };
 };
 
-&i2c0 {
+&i2c0 {                 /*scl = 27 , sda =26 */
     qmc5883l0: qmc5883l@0d {      /* node-label : node-name */
         compatible = "qmc5883l,sensor";
         reg = <0x0D>;
@@ -14,9 +14,6 @@
 
 &i2c1 {
     status = "okay";        /* enable the bus,i2c1 SDA= 30, SCL =31*/
-};
-
-&i2c1 {
 	mpu6050: mpu6050@68 {
 		compatible = "invensense,mpu6050";
 		reg = <0x68>;

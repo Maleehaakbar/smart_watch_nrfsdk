@@ -22,9 +22,11 @@ typedef struct {
     double offset_z;
 } magn_calib_data_t;
 
-static double last_x;
-static double last_y;
-static double last_z;
+struct sensor_value val[3];    /*store raw sensor values*/
+
+static double last_x; /*store calibrated sensor values*/
+static double last_y; /*store calibrated sensor values*/
+static double last_z; /*store calibrated sensor values*/
 static double max_x;
 static double max_y;
 static double max_z;
@@ -35,15 +37,17 @@ bool is_calibrating;
 static magn_calib_data_t calibration_data;
 
 
-/* read qmc833l sensor data without calibration SDA->26,SCL->27*/ 
-int read_sensor(const struct device *sensor)
-{
-	struct sensor_value val[3];
-	int ret = 0;
+static const struct device *qmc_sensor = DEVICE_DT_GET(DT_ALIAS(qmc5883l_dev));
 
-	ret = sensor_sample_fetch(sensor);
+/* read qmc833l sensor data without calibration SDA->26,SCL->27*/ 
+static int read_sensor()
+{
+	
+	int ret = 0; 
+
+	ret = sensor_sample_fetch(qmc_sensor);
 	if (ret == 0) {
-                ret = sensor_channel_get(sensor, SENSOR_CHAN_MAGN_XYZ, val);
+                ret = sensor_channel_get(qmc_sensor, SENSOR_CHAN_MAGN_XYZ, val);
         }
 
 	if (ret == 0) {
@@ -51,18 +55,18 @@ int read_sensor(const struct device *sensor)
 	
 	}
 
-        else{
-                printk("sample fetch/get failed: %d\n", ret);
-
-        }
+    else {
+        printk("sample fetch/get failed: %d\n", ret);
+        return ret;
+    }
 
 	return ret;
 }
 
 /*start qmc clibration*/
-int start_magn_calibration(const struct device *sensor)
+int start_magn_calibration()
 {
-	if (!device_is_ready(sensor)) {
+	if (!device_is_ready(qmc_sensor)) {
         return -ENODEV;
     }
 
@@ -78,25 +82,15 @@ int start_magn_calibration(const struct device *sensor)
     return 0;
 }
 
-int read_magn_with_calibration(const struct device *sensor)
+int read_magn_with_calibration()
 {
-	struct sensor_value val[3];
+	
 	int ret = 0;
 
-	ret = sensor_sample_fetch(sensor);
-	if (ret == 0) {
-                ret = sensor_channel_get(sensor, SENSOR_CHAN_MAGN_XYZ, val);
-        }
-
-	if (ret == 0) {
-		//printk("( x=%d.%06d  y=%d.%06d  z=%d.%06d)\n", val[0].val1,val[0].val2 , val[1].val1,val[1].val2 , val[2].val1,val[2].val2);
-	
-	}
-
-    else{
-            printk("sample fetch/get failed: %d\n", ret);
-            return ret;
-
+    ret = read_sensor();
+    if (ret != 0)
+    {
+        return ret;
     }
 
 	last_x = sensor_value_to_float(&val[0]);
@@ -124,7 +118,6 @@ int read_magn_with_calibration(const struct device *sensor)
         if (last_z > max_z) {
             max_z = last_z;
         }
-
         return ret;
     }
 
@@ -132,9 +125,7 @@ int read_magn_with_calibration(const struct device *sensor)
     last_y = last_y - calibration_data.offset_y;
     last_z = last_z - calibration_data.offset_z;
 
-     printk("Calibrated: X=%f Y=%f Z=%f\n",
-               last_x, last_y, last_z);
-   
+    printk("Calibrated: X=%f Y=%f Z=%f\n",last_x, last_y, last_z);
 
     return ret;
 
@@ -180,17 +171,22 @@ int load_magn_calibration(const char *p_key, size_t len,
     return 0;
 }
 
-int init_magnetometer(const struct device *sensor)
-{
+int init_magnetometer()
+{   
+    if (qmc_sensor == NULL) {
+		/* No such node, or the node does not have status "okay". */
+		printk("\nError: no device found.\n");
+		return 0;
+	}
     /*check if qmc sensor is ready*/
-        if (!device_is_ready(sensor)) {
+        if (!device_is_ready(qmc_sensor)) {
 		printk("\nError: Device \"%s\" is not ready; "
 		       "check the driver initialization logs for errors.\n",
-		       sensor->name);
+		       qmc_sensor->name);
 		return -ENODEV;
 	}
 
-	printk("Found device \"%s\", getting sensor data\n", sensor->name);
+	printk("Found device \"%s\", getting sensor data\n", qmc_sensor->name);
 
      if (settings_subsys_init()) {
         LOG_ERR("Error during settings_subsys_init!");
@@ -203,6 +199,35 @@ int init_magnetometer(const struct device *sensor)
     }
 
     return 0;
+}
+
+
+int read_magnetometer_data(float *x, float *y, float *z)
+{  int ret;
+
+   /*read raw sensor values and assign to x, y, z*/
+   ret = read_sensor();
+
+   #ifdef CONFIG_USE_RAW_MAGNETOMETER_DATA
+   if(ret == 0)
+   {
+    *x = sensor_value_to_float(&val[0]);
+	*y = sensor_value_to_float(&val[1]);
+	*z = sensor_value_to_float(&val[2]); 
+   }
+    #else
+    /*read calibrated data*/
+    ret = read_magn_with_calibration();
+
+    if (ret == 0)
+    {
+        *x = last_x;
+        *y = last_y;
+        *z = last_z;
+    }
+    #endif
+    
+    return ret;
 }
 
 #endif

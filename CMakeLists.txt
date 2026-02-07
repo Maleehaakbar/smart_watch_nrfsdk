@@ -4,13 +4,11 @@ set(ZEPHYR_EXTRA_MODULES "${CMAKE_SOURCE_DIR}/modules/drivers")
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-project(smartwatch_test)
+project(smartwatch_test) 
 
-set (APP_SOURCES
-    src/app/src/magnetometer.c   #can include/exclude magnetometer.c, if qmc driver is enable. 
-    src/app/src/imu.c)   
+add_subdirectory(src/app/src)
 
 target_sources(app PRIVATE src/main.c
-                            ${APP_SOURCES})
+                )
 
 target_include_directories(app PRIVATE src/app/include)
