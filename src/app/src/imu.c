@@ -4,7 +4,7 @@
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(imu, CONFIG_ZSW_APP_LOG_LEVEL);
-   static const struct device *mpu_sensor = DEVICE_DT_GET(DT_ALIAS(mpu6050_dev));
+static const struct device *mpu_sensor = DEVICE_DT_GET(DT_ALIAS(mpu6050_dev));
 
 static const char *now_str(void)
 {
@@ -44,15 +44,15 @@ int read_mpu6050_accel(float *x, float*y, float *z)
 					&temperature);
 	}
 	if (rc == 0) {
-	/*	LOG_INF("[%s]:%g Cel\n"
+		LOG_DBG("[%s]:%g Cel\n"
 		       "  accel %f %f %f m/s/s\n",
 		       now_str(),
 		       sensor_value_to_double(&temperature),
 		       sensor_value_to_double(&accel[0]),
 		       sensor_value_to_double(&accel[1]),
-		       sensor_value_to_double(&accel[2]));*/
+		       sensor_value_to_double(&accel[2]));
 	} else {
-		LOG_INF("sample fetch/accel data get failed: %d\n", rc);
+		LOG_ERR("sample fetch/accel data get failed: %d\n", rc);
 		return rc;
 	}
 
@@ -77,15 +77,15 @@ int read_mpu6050_gyro(float *x, float*y, float *z)
 	if (rc == 0) {
 
 
-	/*LOG_INF("[%s]:\n"
+	LOG_DBG("[%s]:\n"
 		       "  gyro  %f %f %f rad/s\n",
 		       now_str(),
 		       sensor_value_to_double(&gyro[0]),
 		       sensor_value_to_double(&gyro[1]),
-		       sensor_value_to_double(&gyro[2]));*/
+		       sensor_value_to_double(&gyro[2]));
 	
 	} else {
-		LOG_INF("sample fetch/ gyro data get failed: %d\n", rc);
+		LOG_ERR("sample fetch/ gyro data get failed: %d\n", rc);
 		return rc;
 	}
 

@@ -16,11 +16,18 @@ menu "ZSW Application"
         help
             use raw data or calibrated data of measurements
     
-    config ENABLE_IMU
+    config ENABLE_IMU        
         bool "Enable or disable accel and gyro"
         default y
         help
             Enable or disable accel and gyro
+
+    config ENABLE_RTC_TIME
+        bool "Enable or disable RTC"
+        default y
+        help
+          Enable or disable RTC application code
+
     
 
 endmenu

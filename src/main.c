@@ -8,6 +8,7 @@
 #include "magnetometer.h"
 #include "imu.h"
 #include "sensor_fusion.h"
+#include "rtc_time.h"
 
 
 #define SLEEP_TIME_MS 100U
@@ -55,10 +56,15 @@ int main(void)
         k_msleep(150);  // wait 150ms after init
 
         init_mpu6050();
-        read_attribute();
+       
+        sensor_fusion_init();
         #endif
 
-       sensor_fusion_init();
+        #ifdef CONFIG_ENABLE_RTC_TIME
+        ds3231_rtc_init();
+        #endif
+
+       
         while(1)
         { 
                 #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
@@ -87,11 +93,17 @@ int main(void)
                 }
                 
                       //  print_logs();
-        
+
                
-                k_sleep(K_MSEC(10));
+                k_sleep(K_MSEC(1000)); //k_sleep(K_MSEC(10)); //used to test sensor fusion
               
                 #endif
+
+                #ifdef CONFIG_ENABLE_RTC_TIME
+                rtc_get_date_time();
+                #endif
+
+                k_sleep(K_MSEC(1000));
         }
         
         return 0;
