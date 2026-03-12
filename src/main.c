@@ -93,8 +93,6 @@ int main(void)
                 }
                 
                       //  print_logs();
-
-               
                 k_sleep(K_MSEC(1000)); //k_sleep(K_MSEC(10)); //used to test sensor fusion
               
                 #endif

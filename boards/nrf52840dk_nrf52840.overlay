@@ -1,8 +1,8 @@
 / {
     aliases {
         qmc5883l-dev = &qmc5883l0;   /* alias = qmc5883l-dev -> becomes _ in C macros */
-       // mpu6050-dev = &mpu6050;
-         rtc = &ds3231_rtc;
+        mpu6050-dev = &mpu6050;
+        rtc = &ds3231_rtc;
     };
 };
 

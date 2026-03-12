@@ -188,122 +188,9 @@ static void sensor_fusion_timeout(struct k_work *item)
     
     #endif
     //reschedule to run preiodically
-   // k_work_schedule(&sensor_fusion_timer, K_MSEC((1000 / SAMPLE_RATE_HZ) - (k_uptime_get_32() - start)));
-    k_work_schedule(&sensor_fusion_timer, K_MSEC(1000 / SAMPLE_RATE_HZ));
+   // k_work_schedule(&sensor_fusion_timer, K_MSEC(1000 / SAMPLE_RATE_HZ));
+        k_work_schedule(&sensor_fusion_timer, K_MSEC(500));
 
-
-    /*int ret = 0;
-
-    FusionVector gyroscope = {{0.0f, 0.0f, 0.0f}};
-    FusionVector accelerometer = {{0.0f, 0.0f, 0.0f}};
-
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-    FusionVector magnetometer = {{0.0f, 0.0f, 0.0f}};
-    #endif
-
-    uint32_t start = k_uptime_get_32();
-    ret = read_mpu6050_gyro(&gyroscope.axis.x, &gyroscope.axis.y, &gyroscope.axis.z);
-    if (ret!=0)
-    {
-        LOG_ERR("imu_fetch_gyro err: %d", ret);
-    }
-
-      // Convert from rad/s to deg/s
-    gyroscope.axis.x = gyroscope.axis.x * (180.0F / (float)M_PI);
-    gyroscope.axis.y = gyroscope.axis.y * (180.0F / (float)M_PI);
-    gyroscope.axis.z = gyroscope.axis.z * (180.0F / (float)M_PI);
-
-    ret = read_mpu6050_accel(&accelerometer.axis.x, &accelerometer.axis.y, &accelerometer.axis.z);
-
-    if (ret!=0)
-    {
-        LOG_ERR("imu_fetch_accel err: %d", ret);
-    }
-
-      // IMU driver converts to m/s2 by multiplying to 10, convert back to g-force
-    accelerometer.axis.x /= (float)SENSOR_GF;
-    accelerometer.axis.y /= (float)SENSOR_GF;
-    accelerometer.axis.z /= (float)SENSOR_GF;
-
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-    ret = read_magnetometer_data(&magnetometer.axis.x, &magnetometer.axis.y, &magnetometer.axis.z);
-
-    if (ret!=0)
-    {
-        LOG_ERR("fetch_mag err: %d", ret);
-    }
-    #endif
-   static int x=0;
-   if(++x>20)
-   {
-   LOG_INF("Gyro before update : %f %f %f", gyroscope.axis.x, gyroscope.axis.y, gyroscope.axis.z);
-    LOG_INF("Accel before update: %f %f %f", accelerometer.axis.x, accelerometer.axis.y, accelerometer.axis.z);
-
-    x=0;
-   }
-
-    gyroscope = FusionBiasUpdate(&bias, gyroscope);
-    
-    //calculates elapsed time between gyro samples, converts it to seconds, filters out invalid values, 
-   // and keeps the last valid delta time to ensure stable orientation calculations
-     float deltaTime = (start - previousTimestamp) / 1000.0f;   //convert ms to s
-
-    if (deltaTime <= 0.0f || deltaTime > 0.05f) {
-    deltaTime = 1.0f / SAMPLE_RATE_HZ;  // safe fallback
-}
- //  LOG_INF("Delta time: %0.3f seconds", (double)deltaTime);
-    previousTimestamp = start;                                       //calculate time from one sample to another , not always from start
-   // last_delta_time_s = deltaTime > 0 ? deltaTime : last_delta_time_s;  //keep time valid for correct angle measurement
-   
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-    FusionAhrsUpdate(&ahrs, gyroscope, accelerometer, magnetometer, deltaTime);
-    #else
-    FusionAhrsUpdateNoMagnetometer(&ahrs, gyroscope, accelerometer, deltaTime);
-    #endif
-     // Print algorithm outputs
-    const FusionQuaternion q = FusionAhrsGetQuaternion(&ahrs);
-    const FusionEuler euler = FusionQuaternionToEuler(q);
-    const FusionVector earth = FusionAhrsGetEarthAcceleration(&ahrs);
-    
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-    //get heading to find direction via qmc
-    float heading = FusionCompass(accelerometer, magnetometer,FusionConventionNwu);
-    #endif
-
-    fusion_read.roll = euler.angle.roll;
-    fusion_read.pitch = euler.angle.pitch;
-    fusion_read.yaw = euler.angle.yaw;
-    fusion_read.x =  earth.axis.x;
-    fusion_read.y = earth.axis.y;
-    fusion_read.z = earth.axis.z;
-
-    quat_read.w = q.element.w;
-    quat_read.x = q.element.x;
-    quat_read.y = q.element.y;
-    quat_read.z = q.element.z;
-
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-    LOG_INF("Roll %0.1f, Pitch %0.1f, Yaw %0.1f, Head: %01f, X %0.2f, Y %0.2f, Z %0.1f, X %0.1f, Y %0.1f, Z %0.1f, X %0.1f, Y %0.1f, Z %0.1f\n",
-            (double)euler.angle.roll,  (double)euler.angle.pitch,
-            (double)euler.angle.yaw, (double)heading, (double)accelerometer.axis.x, (double)accelerometer.axis.y,
-            (double)accelerometer.axis.z, (double)gyroscope.axis.x, (double)gyroscope.axis.y, (double)gyroscope.axis.z, (double)magnetometer.axis.x, (double)magnetometer.axis.y,
-            (double)magnetometer.axis.z);
-    #else
-   static int i=0;
-   if(++i>20)
-   {
-         LOG_INF("Roll %0.1f, Pitch %0.1f, Yaw %0.1f, X %f , Y %f, Z %f, X %f, Y %f, Z %f\n",
-            (double)euler.angle.roll,  (double)euler.angle.pitch,
-            (double)euler.angle.yaw, (double)accelerometer.axis.x, (double)accelerometer.axis.y,
-            (double)accelerometer.axis.z, (double)gyroscope.axis.x, (double)gyroscope.axis.y, (double)gyroscope.axis.z);
-    i=0;
-   }
-  
-    
-    #endif
-    //reschedule to run preiodically
- //  k_work_schedule(&sensor_fusion_timer, K_MSEC((1000 / SAMPLE_RATE_HZ) - (k_uptime_get_32() - start)));
-   k_work_schedule(&sensor_fusion_timer, K_MSEC(1000 / SAMPLE_RATE_HZ));*/
 }
 
 void sensor_fusion_init()
@@ -322,18 +209,12 @@ void sensor_fusion_init()
 
     FusionAhrsSetSettings(&ahrs, &settings);
     /*schedule the work */
-   k_work_schedule(&sensor_fusion_timer, K_MSEC(1000 / SAMPLE_RATE_HZ));  
- 
+   //k_work_schedule(&sensor_fusion_timer, K_MSEC(1000 / SAMPLE_RATE_HZ));  
+    k_work_schedule(&sensor_fusion_timer, K_MSEC(500));  
 
 }
 
-void print_logs()
-{
-     LOG_INF("Roll %0.1f, Pitch %0.1f, Yaw %0.1f\n",
-            (double)fusion_read.roll,  (double)fusion_read.pitch,
-            (double)fusion_read.yaw);
-}
 
-//debugging
+//debugging :Done
 /*
 test fusion algorithm in seperate project and debug issues*/

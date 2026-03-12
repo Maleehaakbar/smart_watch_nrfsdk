@@ -1,7 +1,7 @@
 menu "ZSW Application"
     module = ZSW_APP
     module-str = "ZSW Application"
-    source "subsys/logging/Kconfig.template.log_config"
+    source "subsys/logging/Kconfig.template.log_config"      #default log level 3 (error, warning , info) / log level 4 include debug
 
     config ENABLE_QMC_CALIBRATION
         depends on ENABLE_QMC5883L_SENSOR

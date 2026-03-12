@@ -44,7 +44,7 @@ int read_mpu6050_accel(float *x, float*y, float *z)
 					&temperature);
 	}
 	if (rc == 0) {
-		LOG_DBG("[%s]:%g Cel\n"
+		LOG_INF("[%s]:%g Cel\n"
 		       "  accel %f %f %f m/s/s\n",
 		       now_str(),
 		       sensor_value_to_double(&temperature),
@@ -77,7 +77,7 @@ int read_mpu6050_gyro(float *x, float*y, float *z)
 	if (rc == 0) {
 
 
-	LOG_DBG("[%s]:\n"
+	LOG_INF("[%s]:\n"
 		       "  gyro  %f %f %f rad/s\n",
 		       now_str(),
 		       sensor_value_to_double(&gyro[0]),

@@ -49,14 +49,14 @@ static int read_sensor()
 	if (ret == 0) {
                 ret = sensor_channel_get(qmc_sensor, SENSOR_CHAN_MAGN_XYZ, val);
         }
-
+    
 	if (ret == 0) {
-		printk("( x=%d.%06d  y=%d.%06d  z=%d.%06d)\n", val[0].val1,val[0].val2 , val[1].val1,val[1].val2 , val[2].val1,val[2].val2);
+		LOG_INF(" qmc data ( x=%d.%06d  y=%d.%06d  z=%d.%06d)\n", val[0].val1,val[0].val2 , val[1].val1,val[1].val2 , val[2].val1,val[2].val2);
 	
 	}
 
     else {
-        printk("sample fetch/get failed: %d\n", ret);
+        LOG_ERR("sample fetch/get failed: %d\n", ret);
         return ret;
     }
 

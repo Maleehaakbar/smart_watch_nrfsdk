@@ -19,6 +19,5 @@ typedef struct quat {
 } quat_t;
 
 void sensor_fusion_init();
-void print_logs();
 
 #endif
