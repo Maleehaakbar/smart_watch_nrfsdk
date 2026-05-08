@@ -1,6 +1,7 @@
 set (APP_SOURCES
     magnetometer.c   #can include/exclude magnetometer.c, if qmc driver is enable. 
     rtc_time.c
+    watch_display.c
     )  
     
  if(CONFIG_ENABLE_IMU)

@@ -8,6 +8,7 @@ LOG_MODULE_REGISTER(rtc_time, CONFIG_ZSW_APP_LOG_LEVEL);
 
 const struct device *const rtc = DEVICE_DT_GET(DT_ALIAS(rtc));
 
+struct rtc_time tm;   /*make the struct global to use in display*/
 
 int ds3231_rtc_init()
 {
@@ -39,8 +40,6 @@ int ds3231_rtc_init()
 int rtc_get_date_time()
 {
     int ret = 0;
-	struct rtc_time tm;
-
 	ret = rtc_get_time(rtc, &tm);
 	if (ret < 0) {
 		LOG_ERR("Cannot read date time: %d\n", ret);

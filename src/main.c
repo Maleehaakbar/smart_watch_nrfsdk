@@ -9,15 +9,18 @@
 #include "imu.h"
 #include "sensor_fusion.h"
 #include "rtc_time.h"
+#include "watch_display.h"
 
 
 #define SLEEP_TIME_MS 100U
-float mag_x, mag_y, mag_z;
-float gyro_x, gyro_y, gyro_z;
-float accel_x , accel_y, accel_z;
 
 int main(void)
 {       int ret;
+        char buff1[30] = {0};
+        char buff2[20] = {0};
+
+        const char* mag_direction = NULL;
+
         #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
         
 
@@ -61,38 +64,30 @@ int main(void)
         #endif
 
         #ifdef CONFIG_ENABLE_RTC_TIME
-        ds3231_rtc_init();
+        /*init rtc and set initial time*/
+        ds3231_rtc_init();   
         #endif
+        
+        watch_display_init();  /*init oled display*/
+        
+        /*create display screen via lvgl*/
+        create_screen1();  
+        
+        #ifdef CONFIG_ENABLE_IMU
+        create_screen2();
+        #endif
+
+        /* load screen1 initally*/
+        lv_scr_load(screen1);
+
+        lv_timer_handler();
 
        
         while(1)
         { 
-                #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
-                /*read x,y,z axis from qmc5883l*/
-                ret = read_magnetometer_data(&mag_x, &mag_y, &mag_z);
-                if(ret!=0)
-                {
-                       // break;  //dont break, just to test with breadboard
-
-                }
-                k_sleep(K_MSEC(500));/*previous when testing without calibration: k_sleep(K_SECONDS(2)) */
-                #endif
 
                 #ifdef CONFIG_ENABLE_IMU
-                /*TODO make qmc and mpu run side by side in while(1)*/
-                ret = read_mpu6050_gyro(&gyro_x, &gyro_y, &gyro_x);
-                if(ret!=0)
-                {
-                       // break;
-                }
-
-                ret = read_mpu6050_accel(&accel_x, &accel_y, &accel_x);
-                if(ret!=0)
-                {
-                      //  break;
-                }
-                
-                      //  print_logs();
+                mag_direction = get_direction();
                 k_sleep(K_MSEC(1000)); //k_sleep(K_MSEC(10)); //used to test sensor fusion
               
                 #endif
@@ -101,11 +96,63 @@ int main(void)
                 rtc_get_date_time();
                 #endif
 
+                /*display time on watch*/
+                sprintf(buff1, "%02d:%02d:%02d",tm.tm_hour, tm.tm_min, tm.tm_sec);
+                lv_label_set_text(rtc_label, buff1);
+
+                k_sleep(K_MSEC(100));
+                
+                #ifdef CONFIG_ENABLE_IMU
+                switch_screens();
+                /*display direction*/
+                sprintf(buff2,"%s", mag_direction);
+                lv_label_set_text(direction_label, buff2);
+                #endif
+                lv_timer_handler();
+
                 k_sleep(K_MSEC(1000));
         }
         
         return 0;
 
 }
+
+/*target : print RTC time on one screen and magnetic direction on screen2
+
+ 1. get RTC time and display
+ 2. get direction and display
+ 
+ 
+ int main()
+ {
+ if enable qmc (qmc init)
+ if qmc calibration enable(perform calibration)
+ if enable imu (init mpu , init sensor fusion)
+ if rtc enable : rtc init
+
+ init zephyr display
+ turn off display
+ create screen1 and 2
+
+ load screen1
+ lv time handler
+
+   while(1)
+   {
+     read rtc and get direction
+
+     set lvgl text for rtc and direction
+     
+   }
+ 
+ } 
+   
+ create screen1()
+ { 
+    create screen and dynamic label
+
+ }
+ 
+ */
 
 

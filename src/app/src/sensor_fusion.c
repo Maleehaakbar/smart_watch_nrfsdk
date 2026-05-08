@@ -30,6 +30,7 @@ static float last_delta_time_s = 0.0f;
 
 sensor_fusion_t fusion_read;
 quat_t quat_read;
+double heading;
 
 
 /*1.0 on the diagonal + 0.0 elsewhere = identity matrix = no correction applied*/
@@ -153,7 +154,7 @@ static void sensor_fusion_timeout(struct k_work *item)
     
     #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
     //get heading to find direction via qmc
-    float heading = FusionCompass(accelerometer, magnetometer,FusionConventionNwu);
+    heading = FusionCompass(accelerometer, magnetometer,FusionConventionNwu);
     #endif
 
     fusion_read.roll = euler.angle.roll;
@@ -214,7 +215,16 @@ void sensor_fusion_init()
 
 }
 
+const char* get_direction()
+{
+    if (heading >= 337.5 || heading < 22.5) return "North";
+    else if (heading < 67.5) return "North-East";
+    else if (heading < 112.5) return "East";
+    else if (heading < 157.5) return "South-East";
+    else if (heading < 202.5) return "South";
+    else if (heading < 247.5) return "South-West";
+    else if (heading < 292.5) return "West";
+    else return "North-West";
+}
 
-//debugging :Done
-/*
-test fusion algorithm in seperate project and debug issues*/
+/* find direction using heading*/

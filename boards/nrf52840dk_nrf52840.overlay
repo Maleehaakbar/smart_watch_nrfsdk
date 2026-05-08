@@ -4,6 +4,10 @@
         mpu6050-dev = &mpu6050;
         rtc = &ds3231_rtc;
     };
+
+    chosen {
+		zephyr,display = &ssd1306;
+	};
 };
 
 &i2c0 {                 /*scl = 27 , sda =26 */
@@ -21,11 +25,22 @@
 
 &i2c1 {
     status = "okay";        /* enable the bus,i2c1 SDA= 30, SCL =31*/
-	/*mpu6050: mpu6050@68 {
-		compatible = "invensense,mpu6050";
-		reg = <0x68>;
-		status = "okay";
-	};*/
+	
+   ssd1306: ssd1306@3c {
+		compatible = "solomon,ssd1306fb";
+		reg = <0x3c>;
+		label = "SSD1306";
+		width  = <128>;
+		height = <64>;
+		segment-offset  = <0>;
+		page-offset     = <0>;
+		display-offset  = <10>;
+		multiplex-ratio = <63>;
+		segment-remap;
+		com-invdir;
+        com-sequential;
+		prechargep = <0x11>;
+	};
 
     ds3231_mfd: ds3231@68 {
         compatible = "maxim,ds3231-mfd";
@@ -48,3 +63,6 @@
     };   
 
 };
+
+
+//TODO: provide support for xiao: nrf54L    

@@ -18,3 +18,8 @@ TODO:
 find x ,y , z axis 
 
 mpu6050 integration , calibration of qmc and mpu , integrae fusion algorithm
+
+power optimization , memory optimization
+
+
+xiao nrf54l15 have support in v3.2.1

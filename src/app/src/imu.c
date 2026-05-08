@@ -114,7 +114,7 @@ int read_attribute()
 int init_mpu6050()
 {
 	if (!device_is_ready(mpu_sensor)) {
-		printf("Device %s is not ready\n", mpu_sensor->name);
+		LOG_ERR("Device %s is not ready\n", mpu_sensor->name);
 		return -ENODEV;
 	}
 
