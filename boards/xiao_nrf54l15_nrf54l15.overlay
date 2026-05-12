@@ -1,0 +1,59 @@
+/ {
+    aliases {
+        qmc5883l-dev = &qmc5883l0;   /* alias = qmc5883l-dev -> becomes _ in C macros */
+        rtc = &ds3231_rtc;
+    };
+
+    chosen {
+		zephyr,display = &ssd1306;
+	};
+};
+
+&xiao_i2c {
+    status = "okay";        /* enable the bus,i2c1 SDA= 30, SCL =31*/
+	
+   ssd1306: ssd1306@3c {
+		compatible = "solomon,ssd1306fb";
+		reg = <0x3c>;
+		label = "SSD1306";
+		width  = <128>;
+		height = <64>;
+		segment-offset  = <0>;
+		page-offset     = <0>;
+		display-offset  = <10>;
+		multiplex-ratio = <63>;
+		segment-remap;
+		com-invdir;
+        com-sequential;
+		prechargep = <0x11>;
+	};
+
+    ds3231_mfd: ds3231@68 {
+        compatible = "maxim,ds3231-mfd";
+        reg = <0x68>;
+        status = "okay";
+
+        /* The RTC is now a child of the MFD node */
+        ds3231_rtc: rtc {
+            compatible = "maxim,ds3231-rtc";
+            status = "okay";
+            isw-gpios = <&gpio0 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+        };
+        
+        /* Optional: Enable the internal temperature sensor */
+        ds3231_sensor: sensor {
+            compatible = "maxim,ds3231-sensor";
+            status = "okay";
+        };
+
+    };  
+    
+    qmc5883l0: qmc5883l@0d {
+        compatible = "qmc5883l,sensor";
+        reg = <0x0D>;
+    };
+
+};
+
+
+ 
