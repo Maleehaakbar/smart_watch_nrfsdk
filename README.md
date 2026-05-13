@@ -1,25 +1,22 @@
 # smart_watch_nrfsdk
 
-magnetometer used for compass , mpu6050 accelero and gyro 
+# overview
 
-atan2(y, x) = angle of the vector (x, y) from the +X axis
-It returns the angle in radians, in the range:
+This smart watch project is developed using nrf connect sdk. It displays time and magnetic direction on watch display.
 
--π  to  +π
-(-180° to +180°)
+# Hardware
+1. nrf52840 /nrf52840dk / xiao_nrf54l15
+2. oled display
+3. QMC5883l magnetometer
+4. MPU6050 IMU
+5. DS3231 RTC
 
-atan2(y, x) gives the correct compass angle in all quadrants, even when x=0.
+# Software
+1. Integration of Sensor fusion library for IMU orientation and magnetic direction.
+2. LVGL module to support RTC display
+3. Write own driver of qmc5883l
 
-Magnetic declination = the angle between
-Magnetic North (where your compass points) and
-True North (geographic North Pole).
-
-TODO:
-find x ,y , z axis 
-
-mpu6050 integration , calibration of qmc and mpu , integrae fusion algorithm
-
-power optimization , memory optimization
-
-
-xiao nrf54l15 have support in v3.2.1
+# Future development
+1. Memory and Power optimization
+2. OTA updates over BLE
+3. Provide support for different boards and SOCs
