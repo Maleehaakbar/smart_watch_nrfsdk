@@ -122,5 +122,5 @@ int init_mpu6050()
 }
 
 /*existing version of zephyr doesnt support sample_rate_drv, 
-updated verssion support via dts bindings */
+updated version support via dts bindings */
 

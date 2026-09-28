@@ -1,8 +1,7 @@
 #check if in kconfig  module is enable then preform build
 if(CONFIG_ENABLE_QMC5883L_SENSOR)
     
-    #zephyr_library() when called without any pararmeter take a directory name as module name so 
-    # thats how drivers and other directories etc organized
+    #take a directory name as module name
     zephyr_library()
 
     # Add the source file you want to compile

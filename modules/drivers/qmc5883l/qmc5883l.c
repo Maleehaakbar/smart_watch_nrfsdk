@@ -178,6 +178,6 @@ int qmc5883l_init(const struct device *dev)
     SENSOR_DEVICE_DT_INST_DEFINE(inst, qmc5883l_init, NULL,					   \
 			      &qmc5883l_data_##inst, &qmc5883l_config_##inst, POST_KERNEL, \
 			      CONFIG_SENSOR_INIT_PRIORITY, &qmc5883l_driver_api);		   \
-// The Devicetree build process calls this to create an instance of structs for
-// each device defined in the Devicetree
+/* The Devicetree build process calls this to create an instance of structs for
+ each device defined in the Devicetree*/
 DT_INST_FOREACH_STATUS_OKAY(QMC5883L_DEFINE)
