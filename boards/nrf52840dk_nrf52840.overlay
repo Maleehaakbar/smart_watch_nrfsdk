@@ -11,7 +11,7 @@
 };
 
 &i2c0 {                 /*scl = 27 , sda =26 */
-    qmc5883l0: qmc5883l@0d {      /* node-label : node-name */
+    qmc5883l0: qmc5883l@d {      /* node-label : node-name, version update */
         compatible = "qmc5883l,sensor";
         reg = <0x0D>;
     };
@@ -25,7 +25,7 @@
 
 &i2c1 {
     status = "okay";        /* enable the bus,i2c1 SDA= 30, SCL =31*/
-	
+
    ssd1306: ssd1306@3c {
 		compatible = "solomon,ssd1306fb";
 		reg = <0x3c>;
@@ -53,16 +53,16 @@
             status = "okay";
             isw-gpios = <&gpio0 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
         };
-        
+
         /* Optional: Enable the internal temperature sensor */
         ds3231_sensor: sensor {
             compatible = "maxim,ds3231-sensor";
             status = "okay";
         };
 
-    };   
+    };
 
 };
 
 
- 
+

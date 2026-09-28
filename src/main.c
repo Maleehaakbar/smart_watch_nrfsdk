@@ -10,7 +10,9 @@
 #include "sensor_fusion.h"
 #include "rtc_time.h"
 #include "watch_display.h"
+#include <zephyr/logging/log.h>
 
+LOG_MODULE_REGISTER(main);
 
 #define SLEEP_TIME_MS 100U
 
@@ -31,7 +33,12 @@ int main(void)
          /*wait for serial display*/
         k_sleep(K_MSEC(1000));
         
-        init_magnetometer();
+        ret = init_magnetometer();
+         if (ret!=0)
+        {
+                LOG_INF("magnetometer init fail");
+                return 0;
+        }
 
         #ifdef CONFIG_ENABLE_QMC_CALIBRATION
         /*test calibration of qmc sensor*/
@@ -58,17 +65,33 @@ int main(void)
         
         k_msleep(150);  // wait 150ms after init
 
-        init_mpu6050();
+        ret = init_mpu6050();
+        if (ret!=0)
+        {
+                LOG_INF("mpu6050 init failed");
+                return 0;
+        }
        
         sensor_fusion_init();
+
         #endif
 
         #ifdef CONFIG_ENABLE_RTC_TIME
         /*init rtc and set initial time*/
-        ds3231_rtc_init();   
+        ret = ds3231_rtc_init();
+        if (ret!=0)
+        {
+                LOG_INF("rtc init failed");
+                return 0;
+        }   
         #endif
         
-        watch_display_init();  /*init oled display*/
+        ret = watch_display_init();  /*init oled display*/
+        if (ret!=0)
+        {
+                LOG_INF("display init failed");
+                return 0;
+        }
         
         /*create display screen via lvgl*/
         create_screen1();  
@@ -81,7 +104,6 @@ int main(void)
         lv_scr_load(screen1);
 
         lv_timer_handler();
-
        
         while(1)
         { 
