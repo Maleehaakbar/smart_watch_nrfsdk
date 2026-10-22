@@ -1,0 +1,27 @@
+# path relative to current directory
+rsource "../usb_common/Kconfig.usb"   
+
+
+menu "Nordic Smart Watch BLE GATT service"
+
+config BT_LBS_SECURITY_ENABLED  #implement it shouldnt have any affect on mcumgr SMP DFU service, if mcumgr OTA service doesnt require encryption , then dfu without pairing should happen
+	bool "Enable security"
+	default y
+	select BT_SMP
+	select BT_SETTINGS
+	select FLASH
+	select FLASH_PAGE_LAYOUT
+	select FLASH_MAP
+	select ZMS if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	select NVS if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	select SETTINGS
+	help
+	  "Enable BLE security for the smart watch service"
+
+endmenu
+
+config DFU_SUPPORT_ENABLE
+	bool "Enable DFU support"
+	default y
+	help
+	  "Enable DFU support over ble and usb"
