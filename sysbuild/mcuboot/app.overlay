@@ -1,0 +1,9 @@
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+
+/*partitions will be shown in memory report if partition manager is enabled or
+configure in prj.conf*/

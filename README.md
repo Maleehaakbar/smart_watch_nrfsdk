@@ -20,3 +20,5 @@ This smart watch project is developed using nrf connect sdk. It displays time an
 1. Memory and Power optimization
 2. OTA updates over BLE
 3. Provide support for different boards and SOCs
+
+

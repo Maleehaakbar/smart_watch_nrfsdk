@@ -7,6 +7,9 @@
 
     chosen {
 		zephyr,display = &ssd1306;
+
+        /* Choose CDC ACM for mcumgr */
+        zephyr,uart-mcumgr = &cdc_acm_uart0;  /*virtual uart is used for mcumgr, in same way could also be used for console */
 	};
 };
 
@@ -63,6 +66,14 @@
     };
 
 };
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart"; /*cdc acm virtual uart emulate over usb, it has no connection with hardware uart */
+		label = "Zephyr USB CDC-ACM";
+	};
+};
+
 
 
 
