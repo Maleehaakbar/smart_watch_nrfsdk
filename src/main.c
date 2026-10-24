@@ -10,6 +10,7 @@
 #include "sensor_fusion.h"
 #include "rtc_time.h"
 #include "watch_display.h"
+#include "app_update.h"
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(main);
@@ -32,6 +33,15 @@ int main(void)
 
          /*wait for serial display*/
         k_sleep(K_MSEC(1000));
+
+        #ifdef CONFIG_DFU_SUPPORT_ENABLE
+        ret = app_update_init(); /*init usb and ble for dfu*/
+        if (ret != 0)
+        {
+                LOG_INF("DFU init failed");
+                return 0;
+        }
+        #endif
         
         ret = init_magnetometer();
          if (ret!=0)
@@ -92,7 +102,7 @@ int main(void)
                 LOG_INF("display init failed");
                 return 0;
         }
-        
+
         /*create display screen via lvgl*/
         create_screen1();  
         

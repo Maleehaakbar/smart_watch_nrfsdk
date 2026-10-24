@@ -6,9 +6,14 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(smartwatch_test) 
 
+include(${PROJECT_SOURCE_DIR}/src/app/usb_common/usb_common.cmake)
+
 add_subdirectory(src/app/src)
+add_subdirectory(src/app/app_update)
 
 target_sources(app PRIVATE src/main.c
                 )
 
 target_include_directories(app PRIVATE src/app/include)
+
+

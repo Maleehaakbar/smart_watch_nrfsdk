@@ -15,8 +15,11 @@ This smart watch project is developed using nrf connect sdk. It displays time an
 1. Integration of Sensor fusion library for IMU orientation and magnetic direction.
 2. LVGL module to support RTC display
 3. Write own driver of qmc5883l
+4. Add MCUBoot bootloader
+5. Support of firmware update over USB and BLE
 
 # Future development
 1. Memory and Power optimization
-2. OTA updates over BLE
 3. Provide support for different boards and SOCs
+
+

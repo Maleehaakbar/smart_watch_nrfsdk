@@ -169,7 +169,9 @@ static void sensor_fusion_timeout(struct k_work *item)
     quat_read.y = q.element.y;
     quat_read.z = q.element.z;
 
-    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR
+    //debug : when this log gets print
+
+    #ifdef CONFIG_ENABLE_QMC5883L_SENSOR      
     LOG_INF("Roll %0.1f, Pitch %0.1f, Yaw %0.1f, Head: %01f, X %0.2f, Y %0.2f, Z %0.1f, X %0.1f, Y %0.1f, Z %0.1f, X %0.1f, Y %0.1f, Z %0.1f\n",
             (double)euler.angle.roll,  (double)euler.angle.pitch,
             (double)euler.angle.yaw, (double)heading, (double)accelerometer.axis.x, (double)accelerometer.axis.y,

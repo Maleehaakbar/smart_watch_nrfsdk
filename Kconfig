@@ -1,3 +1,7 @@
 #this Kconfig is for src directory , external components/modules can be compiled without it
 rsource "src/app/src/Kconfig"
+rsource "src/app/app_update/Kconfig"
+
 source "Kconfig"
+
+
