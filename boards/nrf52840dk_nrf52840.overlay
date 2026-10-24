@@ -1,3 +1,8 @@
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+
 / {
     aliases {
         qmc5883l-dev = &qmc5883l0;   /* alias = qmc5883l-dev -> becomes _ in C macros */
@@ -74,6 +79,40 @@
 	};
 };
 
+&flash0 {
+	partitions {
+
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";  /* CPU mapped address indicate that it is a part of SoC*/
+			label = "mcuboot";
+			reg = <0x000000000 0x00010000>;
+		};
+
+		slot0_partition: partition@10000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x000010000 0x0000e8000>;
+		};
+	};
+};
+
+/* STEP 2.1 - Add external flash to board conf file */
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";    /*fixed partition used for external flash, it is external to SoC */
+		#address-cells = <1>;       /* 1 represents 32-bit address, 2 (64-bit address) */
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x000000000 0x0000e8000>;
+		};
+	};
+};
 
 
 
