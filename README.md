@@ -17,6 +17,8 @@ This smart watch project is developed using nrf connect sdk. It displays time an
 3. Write own driver of qmc5883l
 4. Add MCUBoot bootloader
 5. Support of firmware update over USB and BLE
+6. Fetch GPS location from phone over BLE
+7. Fetch weather data from http via BLE
 
 # Future development
 1. Memory and Power optimization

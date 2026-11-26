@@ -287,7 +287,8 @@ void update_data_length(struct bt_conn *conn)
     }
 }
 
-/*TODO: make http request work , http request currently not send with k_work, but exected with main loop*/
+/*TODO: make http request work , http request currently not send with k_work, but can be exected with main loop
+  see if seperate thread, work queue needs*/
 void weather_request_handler(struct k_work *work)
 {
 	uint8_t weather_done = false;
