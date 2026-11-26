@@ -1,0 +1,1 @@
+1. apply memory and power optimization at each level (hardware, software), at each software module(sensors, ble, display etc)

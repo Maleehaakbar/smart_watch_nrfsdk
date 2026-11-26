@@ -23,6 +23,9 @@
 
 #include <zephyr/settings/settings.h>
 #include <zephyr/logging/log.h>
+#include <bluetooth/services/nus.h>
+#include "ble_gps_weather.h"
+
 
 
 LOG_MODULE_REGISTER(ble, LOG_LEVEL_INF);
@@ -35,9 +38,9 @@ LOG_MODULE_REGISTER(ble, LOG_LEVEL_INF);
 #define SMART_WATCH_SERVICE_VALUE  BT_UUID_128_ENCODE(0xf21ab647, 0x4ab7, 0x41a6, 0x9a55, 0x6be281bbfbcb)  //convert to raw bytes
 #define SMART_WATCH_SERVICE_UUID BT_UUID_DECLARE_128(SMART_WATCH_SERVICE_VALUE)    //to be used in zephyr APIs
 
-
-
-static struct k_work adv_work;
+ struct k_work adv_work;
+ struct bt_conn *current_conn;
+ struct bt_conn *auth_conn;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -67,14 +70,18 @@ static void advertising_start(void)
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
+	char addr[BT_ADDR_LE_STR_LEN];
 	if (err) {
 		LOG_ERR("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
 		return;
 	}
 
-	LOG_INF("Connected\n");
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	LOG_INF("Connected %s", addr);
 
-	
+	current_conn = bt_conn_ref(conn);
+	update_data_length(current_conn);/* mtu update  is at ATT layer , so to send larger data in one connection , also updaate data length in Link layer */
+	update_mtu(current_conn);  
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
@@ -200,6 +207,13 @@ int ble_init(void)
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
+	}
+
+	err = bt_nus_init(&nus_cb);
+	if (err)
+	{
+		LOG_ERR("Failed to initialize UART service (err: %d)", err);
+		return 0;
 	}
 
 	k_work_init(&adv_work, adv_work_handler);

@@ -2,6 +2,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
+#include <stdio.h>
 
 LOG_MODULE_REGISTER(imu, CONFIG_ZSW_APP_LOG_LEVEL);
 static const struct device *mpu_sensor = DEVICE_DT_GET(DT_ALIAS(mpu6050_dev));
